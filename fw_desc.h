@@ -65,6 +65,65 @@ typedef struct _fw_desc_config_t
 #endif
 } fw_desc_config_t;
 
+typedef union _fw_desc_status_t
+{
+    struct _fw_desc_status_bits_t
+    {
+        u8 logical_sts0;
+        u8 logical_sts1;
+        u8 error_cnt_over;
+        u8 physical_sts;
+    } bits;
+
+    struct _fw_desc_fcl_status_t
+    {
+        u8 data_path_err;
+        u8 nand_level       : 2;
+        u8 nand_rd_cnt      : 6;
+        u8 err_cnt;
+        u8 nand_err;
+    } fcl_sts;
+
+    struct _fw_desc_fcl_list_t
+    {
+        u16 next1;
+        u16 next2;
+    } fcl_list;
+
+    struct _fw_desc_mt_field_t
+    {
+        u8 cb_id;
+        u8 fifo_id;
+        u16 next1;
+    } mt_field;
+
+    u32 config;
+
+} fw_desc_status_t;
+
+typedef union _fw_desc_unc_laa_t
+{
+    struct _fw_desc_unc_laa_bits_t
+    {
+        u16 laa_h : 8;
+        u16 erase_cnt_lvl : 2;
+        u16 rd_disturb_lvl : 2;
+        u16 unc_hdl_lvl : 2;
+        u16 in_order_4k : 1;
+        u16 seq_read_flag : 1;
+        u16 next3;
+    } bits;
+
+    struct _fw_desc_unc_laa_write_t
+    {
+        u8 laa_h;
+        u8 fua_entry_id;
+        u16 rsvd;
+    } write;
+
+    u32 config;
+} fw_desc_unc_laa_t;
+
 typedef struct _fw_desc_t
 {
     u16 next;
@@ -73,14 +132,14 @@ typedef struct _fw_desc_t
     u8 start : 3;
     u8 len : 3;
     u8 read_unc : 1;
-    u8 ctu : 1;
+    u8 ctu : 1; // 4
     u16 cmd_id;
-    u16 hash;
-    fw_desc_config_t config;
-    u32 buf_addr;
-    u32 faa;
-    fw_desc_sts_t status;
-    fw_desc_unc_laa_t unc_info;
+    u16 hash; // 8
+    fw_desc_config_t config; // 16
+    u32 buf_addr;  // 20
+    u32 faa; // 24
+    fw_desc_status_t status;  // 28
+    fw_desc_unc_laa_t unc_info;  // 32
     #if (FCL_IF_META_DATA_SIZE > META_SIZE_0DW)
     u32 laa;
     #endif
@@ -91,7 +150,7 @@ typedef struct _fw_desc_t
     u32 meta2;
     #endif
     #if (FCL_IF_META_DATA_SIZE > META_SIZE_3DW)
-    u32 meta3;
+    u32 meta3; // 48
     #endif
     #if (FCL_IF_META_DATA_SIZE > META_SIZE_4DW)
     u32 meta4;

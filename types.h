@@ -44,6 +44,11 @@ enum {
         true  = 1
 };
 
+enum {
+    FALSE = 0,
+    TRUE = 1
+};
+
 #define _offsetof(TYPE, MEMBER)  ((size_t)&((TYPE *)0)->MEMBER)
 
 /**

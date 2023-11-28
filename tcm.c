@@ -164,9 +164,9 @@ static const tcm_info_t m_b1tcm_info[] =
     // B1TCM_INFO(DEBUG_CMD_CQ_BASE, DEBUG_CMD_CQ_END),
     // B1TCM_INFO(DEBUG_MODE_FLAG, DEBUG_MODE_FLAG_END),
     // #endif
-    // #if (OPT_TCM_DESC)
-    // B1TCM_INFO(FW_CMD_DESC0_BASE, FW_CMD_DESC_END),
-    // #endif
+    #if (OPT_TCM_DESC)
+    B1TCM_INFO(FW_CMD_DESC0),
+    #endif
     // #if (OPT_BUF_USE_DBG2) || (OPT_DESC_USE_DBG2)
     // B1TCM_INFO(DRAM_BUF_HW_BITMAP_BASE, DRAM_BUF_HW_BITMAP_END),
     // B1TCM_INFO(DRAM_BUF_FW_BITMAP_BASE, DRAM_BUF_FW_BITMAP_END),
@@ -355,11 +355,11 @@ int tcm_init(void)
     }
 
     // debug
-    for (int i = 0; i < B1TCM_ID_MAX_NUM; i++) {
-        const tcm_info_t *tcm_info = &m_sys_tcm_info[SYS_MEM_TYPE_B1TCM].tcm_info[i];
+    for (int id = 0; id < B1TCM_ID_MAX_NUM; id++) {
+        const tcm_info_t *tcm_info = &m_sys_tcm_info[SYS_MEM_TYPE_B1TCM].tcm_info[id];
         printf("id: %d, name: %s, base: %8x, size: %4x, tcm: %8x\n",
             tcm_info->id, tcm_info->name, tcm_info->base, tcm_info->size,
-            tcm_get_addr(SYS_MEM_TYPE_B1TCM, i));
+            tcm_get_addr(SYS_MEM_TYPE_B1TCM, id));
     }
 
     return 0;

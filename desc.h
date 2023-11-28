@@ -3,4 +3,4 @@
 
 #define DESC_ID_NULL        (0xFFFF)
 
-#endif DESC_H   // ~　DESC_H
+#endif // ~ DESC_H

@@ -73,7 +73,7 @@ extern int fifo_pop_full(int fifo_idx);
 extern void *fifo_get_push_ptr(int fifo_idx);
 extern void *fifo_get_pop_ptr(int fifo_idx);
 extern int fifo_init(void);
-extern int fifo_delete(void);
+extern int fifo_deinit(void);
 extern void fifo_unit_test(void);
 
 #endif // FIFO_H

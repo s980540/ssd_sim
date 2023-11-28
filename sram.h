@@ -16,7 +16,7 @@
 #if (OPT_TCM_DESC)
 #define FC_FW_SUBMISSON_Q_BASE      (SRAM_BASE)
 #else
-#define FC_FW_SUBMISSON_Q_BASE      (FW_MEM_ADDR_ALIGNED(FW_CMD_DESC_END))
+#define FC_FW_SUBMISSON_Q_BASE      (FW_MEM_ADDR_ALIGNED(FW_CMD_DESC0_END))
 #endif
 #define FC_FW_SUBMISSON_Q_END \
     (FC_FW_SUBMISSON_Q_BASE         + FCL_FC_CMD_FMT_SIZE * FLIC_FC_CMD_MAX_NUM)
@@ -221,7 +221,7 @@
 #else
     #error "META_DATA_SIZE NOT SUPPORT2."
 #endif
-#if FW_CMD_DESC1_BASE <= FW_CMD_DESC_END
+#if FW_CMD_DESC1_BASE <= FW_CMD_DESC0_END
     #error "Two desc overlap err"
 #endif
 #else

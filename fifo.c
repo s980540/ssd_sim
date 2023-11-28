@@ -240,7 +240,7 @@ int fifo_init(void)
     return 0;
 }
 
-int fifo_delete(void)
+int fifo_deinit(void)
 {
     return 0;
 }

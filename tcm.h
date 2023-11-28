@@ -635,10 +635,10 @@
 #endif
 #endif
 
-#define FW_CMD_DESC_END             (FW_CMD_DESC_NUM * FW_CMD_DESC_SIZE + FW_CMD_DESC0_BASE)
+#define FW_CMD_DESC0_END             (FW_CMD_DESC_NUM * FW_CMD_DESC_SIZE + FW_CMD_DESC0_BASE)
 
 #if (OPT_BUF_USE_DBG2) || (OPT_DESC_USE_DBG2)
-#define DRAM_BUF_HW_BITMAP_BASE     (FW_MEM_ADDR_ALIGNED(FW_CMD_DESC_END))
+#define DRAM_BUF_HW_BITMAP_BASE     (FW_MEM_ADDR_ALIGNED(FW_CMD_DESC0_END))
 #define DRAM_BUF_HW_BITMAP_END      (DRAM_BUF_HW_BITMAP_BASE + (DATA_BUF_DRAM_LL_ENTRY_NUM >> 3) + 1)// 4k buf use 1bit
 
 #define DRAM_BUF_FW_BITMAP_BASE     (FW_MEM_ADDR_ALIGNED(DRAM_BUF_HW_BITMAP_END))
@@ -663,7 +663,7 @@
 #define DESC1_FW_BITMAP_END         (DESC1_FW_BITMAP_BASE + (FW_CMD_DESC1_NUM >> 3) + 1)// 4k buf use 1bit
 #define DESC_TEMP_END               (DESC1_FW_BITMAP_END)
 #else
-#define DESC_TEMP_END               (FW_CMD_DESC_END)
+#define DESC_TEMP_END               (FW_CMD_DESC0_END)
 #endif
 
 // hw trim vd
@@ -1001,6 +1001,9 @@ typedef enum _b1tcm_id_e
     COM_CMD_SQ0_FIFO_IDX,
     COM_CMD_SQ1_FIFO_IDX,
     COM_CMD_CQ1_FIFO_IDX,
+    #if (OPT_TCM_DESC)
+    FW_CMD_DESC0_IDX,
+    #endif
     #if (EN_MT_HMB)
     // LFF_HMB_SQ1_FIFO_IDX,
     // LFF_HMB_CQ1_FIFO_IDX,
