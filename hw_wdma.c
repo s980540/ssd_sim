@@ -1,6 +1,7 @@
 #include "hw_wdma.h"
 #include "reg_hw_wdma_ctrl_cclk.h"
 #include "mutex.h"
+#include "tcm.h"
 
 static reg_hw_wdma_ctrl_cclk_t *reg_hw_wdma_ctrl_cclk = NULL;
 
@@ -31,9 +32,20 @@ int hw_wdma_deinit(void)
     return 0;
 }
 
+typedef struct _hw_xdma_desc_manager_t
+{
+    u32 head_desc_id;
+    u32 tail_desc_id;
+    u16 head_desc;
+} __attribute__((packed)) hw_xdma_desc_manager_t;
+
+static hw_xdma_desc_manager_t m_xdma_desc_manager;
+
 int hw_xdma_desc_init(void)
 {
-
+    m_xdma_desc_manager.head_desc_id = 0;
+    m_xdma_desc_manager.tail_desc_id =;
+    m_xdma_desc_manager.head_desc =
 }
 
 int hw_wdma_desc_rdy(void)
