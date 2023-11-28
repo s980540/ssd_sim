@@ -1,6 +1,8 @@
 #include "global.h"
 #include "thread.h"
 
+#include "host_sim.h"
+
 static thread_info_t m_thread_info;
 
 void *main_host(void *para)
@@ -15,7 +17,14 @@ void *main_host(void *para)
     request.tv_sec = 0;
     request.tv_nsec = m_thread_info.sleep_nsec;
 
+    host_sim_seq_write_init();
+
     while (1) {
+        u64 lba;
+
+        lba = host_sim_seq_write_exec();
+        printf("[Thread h]: lba: %llx\n", lba);
+
         if (m_thread_info.sleep_nsec) {
             ret = nanosleep(&request, NULL);
             if (ret == -1)

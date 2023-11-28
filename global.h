@@ -45,8 +45,8 @@
 #define EN_FEATURE_APACER_CORE_POWER    (0)
 #define EN_NAND_REINIT_FEATURE  (1)
 
-#define OPT_SW_SIM_REG          (1)
-#if (OPT_SW_SIM_REG)
+#define OPT_SW_SIM          (1)
+#if (OPT_SW_SIM)
 #include "pthread.h"
 #endif
 

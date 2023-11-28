@@ -126,7 +126,7 @@ typedef union _fw_desc_unc_laa_t
 
 typedef struct _fw_desc_t
 {
-    u16 next;
+    u16 next_id;
     u8 cb_id : 7;
     u8 flag : 1;
     u8 start : 3;

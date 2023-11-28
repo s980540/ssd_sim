@@ -32,5 +32,6 @@ typedef struct _host_write_list_t
 
 #define HW_DESC_CNT_MAX (FRAG_QNTY)
 
+void host_write_top_exec(void);
 
 #endif // HOST_WRITE_H

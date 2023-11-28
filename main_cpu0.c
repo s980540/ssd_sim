@@ -2,6 +2,8 @@
 #include "thread.h"
 // #include "main.h"
 
+#include "host_write.h"
+
 static thread_info_t m_thread_info;
 
 void main_cpu0_unit_test(void)
@@ -31,6 +33,7 @@ void *main_cpu0(void *para)
 
     while (1) {
         // main_cpu0_unit_test();
+        host_write_top_exec();
         if (m_thread_info.sleep_nsec) {
             ret = nanosleep(&request, NULL);
             if (ret == -1)

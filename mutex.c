@@ -1,5 +1,16 @@
 #include "mutex.h"
 
+int mutex_init(pthread_mutex_t *mutex)
+{
+    int sts;
+
+    sts = pthread_mutex_init(mutex, NULL);
+    if (sts)
+        printf("pthread_mutex_init error: %d\n", sts);
+
+    return sts;
+}
+
 int mutex_lock(pthread_mutex_t *mutex)
 {
     int sts;

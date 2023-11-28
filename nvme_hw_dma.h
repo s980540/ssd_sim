@@ -5,7 +5,7 @@
 
 typedef struct _hw_wdma_dw0_t
 {
-    u32 next : 16;
+    u32 next_id : 16;
     u32 rsvd : 16;
 } hw_wdma_dw0_t;
 

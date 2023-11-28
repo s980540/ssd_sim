@@ -50,6 +50,7 @@ void host_write_insert_desc_to_list(void)
             g_hw_list.lba
                 = hw_wdma_desc->lba_low.lba_31_0
                 | ((u64)hw_wdma_desc->glb.lba_37_32 << U32_SHIFT);
+            printf("lba: %llx\n", g_hw_list.lba);
 
             g_hw_list.tail_desc = fw_desc;
             g_hw_list.tail_desc_id = desc_id;
@@ -73,7 +74,7 @@ void host_write_insert_desc_to_list(void)
                     | (u64)hw_wdma_desc->glb.lba_37_32 << U32_SHIFT;
                 g_hw_list.total_lba_cnt = lba_cnt;
                 g_hw_list.head_4k_aligned = FALSE;
-                fw_desc->next = DESC_ID_NULL;
+                fw_desc->next_id = DESC_ID_NULL;
                 return;
             }
             g_hw_list.head_4k_aligned = TRUE;
@@ -91,7 +92,7 @@ void host_write_insert_desc_to_list(void)
             g_hw_list.total_desc_cnt++;
             g_hw_list.tail_desc = fw_desc;
             g_hw_list.tail_desc_id = desc_id;
-            fw_desc->next = DESC_ID_NULL;
+            fw_desc->next_id = DESC_ID_NULL;
 
             if (g_hw_list.total_desc_cnt >= HW_DESC_CNT_MAX)
                 return;

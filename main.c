@@ -5,6 +5,9 @@
 #include "tcm.h"
 #include "list.h"
 
+#include "hw_wdma.h"
+#include "host_sim.h"
+
 foo_ts foo = {.mutex = (PTHREAD_MUTEX_INITIALIZER), .val = 0};
 
 void main_test(void)
@@ -76,6 +79,15 @@ int main(int argc, char *argv[])
     print_tcm_info();
     tcm_init();
     fifo_init();
+    if (hw_xdma_desc_init())
+        printf("hw_xdma_desc_init fail\n");
+    if (hw_xdma_desc_check())
+        printf("hw_xdma_desc_check fail\n");
+    else
+        printf("hw_xdma_desc_check pass\n");
+    if (hw_wdma_init())
+        printf("hw_wdma_init fail\n");
+    system("pause");
 
     main_test();
 
@@ -84,9 +96,11 @@ int main(int argc, char *argv[])
     // fifo_unit_test();
 
     thread_delete();
+    hw_wdma_deinit();
+    hw_xdma_desc_deinit();
+    // fifo_deinit();
     tcm_release();
 
-    // fifo_deinit();
 
     return 0;
 }
