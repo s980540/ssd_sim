@@ -204,7 +204,7 @@ int fifo_init(void)
     g_fifo[FIFO_TYPE_COM_CMD_SQ0].rear = 0;
     g_fifo[FIFO_TYPE_COM_CMD_SQ0].size = COM_CMD_SQ_FIFO_SIZE;
     g_fifo[FIFO_TYPE_COM_CMD_SQ0].entry_size = COM_CMD_SQ_FIFO_ENTRY_SIZE;
-    g_fifo[FIFO_TYPE_COM_CMD_SQ0].ptr = tcm_get_ptr(SYS_MEM_TYPE_B1TCM, COM_CMD_SQ0_FIFO_IDX);
+    g_fifo[FIFO_TYPE_COM_CMD_SQ0].ptr = (void *)COM_CMD_SQ0_FIFO_BASE;
     printf("g_fifo[FIFO_TYPE_COM_CMD_SQ0].ptr: %8x\n", (u32)g_fifo[FIFO_TYPE_COM_CMD_SQ0].ptr);
 
     sts = pthread_mutex_init(&g_fifo[FIFO_TYPE_COM_CMD_SQ1].mutex, NULL);
@@ -214,7 +214,7 @@ int fifo_init(void)
     g_fifo[FIFO_TYPE_COM_CMD_SQ1].rear = 0;
     g_fifo[FIFO_TYPE_COM_CMD_SQ1].size = COM_CMD_SQ_FIFO_SIZE;
     g_fifo[FIFO_TYPE_COM_CMD_SQ1].entry_size = COM_CMD_SQ_FIFO_ENTRY_SIZE;
-    g_fifo[FIFO_TYPE_COM_CMD_SQ1].ptr = tcm_get_ptr(SYS_MEM_TYPE_B1TCM, COM_CMD_SQ1_FIFO_IDX);
+    g_fifo[FIFO_TYPE_COM_CMD_SQ1].ptr = (void *)COM_CMD_SQ1_FIFO_BASE;
     printf("g_fifo[FIFO_TYPE_COM_CMD_SQ1].ptr: %8x\n", (u32)g_fifo[FIFO_TYPE_COM_CMD_SQ1].ptr);
 
     sts = pthread_mutex_init(&g_fifo[FIFO_TYPE_COM_CMD_CQ0].mutex, NULL);
@@ -224,7 +224,7 @@ int fifo_init(void)
     g_fifo[FIFO_TYPE_COM_CMD_CQ0].rear = 0;
     g_fifo[FIFO_TYPE_COM_CMD_CQ0].size = COM_CMD_CQ_FIFO_SIZE;
     g_fifo[FIFO_TYPE_COM_CMD_CQ0].entry_size = COM_CMD_CQ_FIFO_ENTRY_SIZE;
-    g_fifo[FIFO_TYPE_COM_CMD_CQ0].ptr = tcm_get_ptr(SYS_MEM_TYPE_B1TCM, COM_CMD_CQ0_FIFO_IDX);
+    g_fifo[FIFO_TYPE_COM_CMD_CQ0].ptr = (void *)COM_CMD_CQ0_FIFO_BASE;
     printf("g_fifo[FIFO_TYPE_COM_CMD_CQ0].ptr: %8x\n", (u32)g_fifo[FIFO_TYPE_COM_CMD_CQ0].ptr);
 
     sts = pthread_mutex_init(&g_fifo[FIFO_TYPE_COM_CMD_CQ1].mutex, NULL);
@@ -234,7 +234,7 @@ int fifo_init(void)
     g_fifo[FIFO_TYPE_COM_CMD_CQ1].rear = 0;
     g_fifo[FIFO_TYPE_COM_CMD_CQ1].size = COM_CMD_CQ_FIFO_SIZE;
     g_fifo[FIFO_TYPE_COM_CMD_CQ1].entry_size = COM_CMD_CQ_FIFO_ENTRY_SIZE;
-    g_fifo[FIFO_TYPE_COM_CMD_CQ1].ptr = tcm_get_ptr(SYS_MEM_TYPE_B1TCM, COM_CMD_CQ1_FIFO_IDX);
+    g_fifo[FIFO_TYPE_COM_CMD_CQ1].ptr = (void *)COM_CMD_CQ1_FIFO_BASE;
     printf("g_fifo[FIFO_TYPE_COM_CMD_CQ1].ptr: %8x\n", (u32)g_fifo[FIFO_TYPE_COM_CMD_CQ1].ptr);
 
     return 0;

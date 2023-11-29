@@ -22,8 +22,8 @@ typedef struct _sys_tcm_info_t
         ? type : SYS_MEM_TYPE_UNKNOWN)}
 
 #define B1TCM_INFO(NAME) \
-    {#NAME, (NAME##_BASE), (NAME##_END), (NAME##_END) - (NAME##_BASE), \
-    ((((NAME##_BASE) >= B1TCM_BASE) && ((NAME##_END) <= B1TCM_END)) && ((NAME##_BASE) <= (NAME##_END))) \
+    {#NAME, (_##NAME##_BASE), (NAME##_END), (NAME##_END) - (_##NAME##_BASE), \
+    ((((_##NAME##_BASE) >= B1TCM_BASE) && ((NAME##_END) <= B1TCM_END)) && ((_##NAME##_BASE) <= (NAME##_END))) \
         ? SYS_MEM_TYPE_B1TCM : SYS_MEM_TYPE_UNKNOWN, NAME##_IDX}
 
 #define SYS_TCM_INFO(base, end, align, ptr, tcm_info) \
@@ -328,7 +328,7 @@ int tcm_init(void)
         for (int i = 0; m_b1tcm_info[i].name != tcm_info->name; i++) {
             if ((tcm_info->type == m_b1tcm_info[i].type)
                 && ((tcm_info->base < m_b1tcm_info[i].end)
-                    || (tcm_info->end  < m_b1tcm_info[i].end))) {
+                    || (tcm_info->end < m_b1tcm_info[i].end))) {
             // if ((tcm_info->type == m_b1tcm_info[i].type)
             //     && ((tcm_info->base >= m_b1tcm_info[i].base)
             //         && (tcm_info->end  <= m_b1tcm_info[i].end))) {
@@ -389,7 +389,7 @@ int tcm_release(void)
 u32 tcm_get_addr(sys_mem_type_e tcm_type, b1tcm_id_e tcm_id)
 {
     if (tcm_type < SYS_MEM_TYPE_B0TCM_CPU0 || tcm_type > SYS_MEM_TYPE_B1TCM)
-        return U32_MASK;
+        return 0;
 
     sys_tcm_info_t *sys_tcm = &m_sys_tcm[tcm_type];
     return sys_tcm->tcm_info[tcm_id].base - sys_tcm->base + (u32)sys_tcm->ptr;

@@ -19,9 +19,7 @@ void main_test(void)
     printf("sizeof(com_cmd_sq_entry_t): %d\n", sizeof(com_cmd_sq_entry_t));
     printf("sizeof(com_cmd_sq_format_add_t): %d\n", sizeof(com_cmd_sq_format_add_t));
     printf("sizeof(swlist_t): %d\n", sizeof(swlist_t));
-    printf("%x %x\n",
-        tcm_get_ptr(SYS_MEM_TYPE_B1TCM, SHARED_VAR_IDX),
-        &r_pause_write);
+    printf("%x %x\n", SHARED_VAR_BASE, &r_pause_write);
 
     if (sizeof(fw_desc_t) != 48) {
         printf("sizeof(fw_desc_t): %d\n", sizeof(fw_desc_t));

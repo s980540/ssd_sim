@@ -10,7 +10,7 @@ swlist_t g_ftl_write_cache_flush_list;
 
 void ftl_write_cache_init(void)
 {
-    g_ftl_write_cache.hash_tbl = tcm_get_ptr(SYS_MEM_TYPE_B1TCM, WC_HASH_TBL_IDX);
+    g_ftl_write_cache.hash_tbl = (u16 *)WC_HASH_TBL_BASE;
     g_ftl_write_cache.push = ftl_write_cache_push;
     g_ftl_write_cache.del = ftl_write_cache_del;
     g_ftl_write_cache.del_list = ftl_write_cache_del_list;

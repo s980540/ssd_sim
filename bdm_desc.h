@@ -105,10 +105,10 @@ typedef struct _hw_desc_t
 
 #if (OPT_SW_SIM)
 #define FCL_DESC_PTR_2_ID(ptr) \
-    (((hw_desc_t *)ptr) - ((hw_desc_t *)tcm_get_ptr(SYS_MEM_TYPE_B1TCM, FW_CMD_DESC0_IDX)))
+    (((hw_desc_t *)ptr) - ((hw_desc_t *)FW_CMD_DESC0_BASE))
 
 #define FCL_DESC_ID_2_PTR(id) \
-    (((hw_desc_t *)tcm_get_ptr(SYS_MEM_TYPE_B1TCM, FW_CMD_DESC0_IDX)) + (id))
+    (((hw_desc_t *)FW_CMD_DESC0_BASE) + (id))
 #else
 #define FCL_DESC_PTR_2_ID(ptr) \
     (((hw_desc_t *)ptr) - (hw_desc_t *)FCL_IF_DESC0_MEM_BASE)

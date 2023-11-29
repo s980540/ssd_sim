@@ -20,8 +20,6 @@ void host_sim_seq_write_init(void)
 
 u64 host_sim_seq_write_exec(void)
 {
-    u64 lba;
-
     if (hw_wdma_ctrl_cclk_lock()) {
         printf("hw_wdma_ctrl_cclk_lock fail\n");
         goto exit;
