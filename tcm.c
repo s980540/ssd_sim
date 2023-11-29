@@ -179,7 +179,7 @@ static const tcm_info_t m_b1tcm_info[] =
     // #endif
 
     // B1TCM_INFO(HW_TRIM_VC_BASE2, HW_TRIM_VC_END2),
-    // B1TCM_INFO(WC_HASH_TBL_BASE, WC_HASH_TBL_END),
+    B1TCM_INFO(WC_HASH_TBL),
     // B1TCM_INFO(CMT_MEM_BASE, CMT_MEM_END),
     // B1TCM_INFO(CMT_HASH_MEM_BASE, CMT_HASH_MEM_END),
     // B1TCM_INFO(CMUT_MEM_BASE, CMUT_MEM_END),
@@ -216,7 +216,7 @@ static const tcm_info_t m_b1tcm_info[] =
     {NULL}
 };
 
-sys_tcm_info_t m_sys_tcm_info[SYS_MEM_TYPE_MAX_NUM - 2] =
+sys_tcm_info_t m_sys_tcm[SYS_MEM_TYPE_MAX_NUM - 2] =
 {
     SYS_TCM_INFO(B0TCM_BASE, B0TCM_END, B0TCM_SIZE, NULL, NULL),
     SYS_TCM_INFO(B0TCM_BASE, B0TCM_END, B0TCM_SIZE, NULL, NULL),
@@ -227,12 +227,12 @@ sys_tcm_info_t m_sys_tcm_info[SYS_MEM_TYPE_MAX_NUM - 2] =
 
 void print_tcm_info(void)
 {
-    const tcm_info_t *_tcm_info = NULL;
+    const tcm_info_t *tcm_info = NULL;
     int total_size[SYS_MEM_TYPE_MAX_NUM - 2], addr_end[SYS_MEM_TYPE_MAX_NUM - 2];
 
     memset(total_size, 0, sizeof(total_size));
     for (int i = 0; i < SYS_MEM_TYPE_SRAM; i++)
-        addr_end[i] = m_sys_tcm_info[i].base;
+        addr_end[i] = m_sys_tcm[i].base;
 
     printf("\n");
     print_str("Name",   4, 0, 19);
@@ -245,32 +245,32 @@ void print_tcm_info(void)
     print_ch('-',       95);
     printf("\n");
 
-    for (_tcm_info = m_b1tcm_info; _tcm_info->name != NULL; _tcm_info++) {
+    for (tcm_info = m_b1tcm_info; tcm_info->name != NULL; tcm_info++) {
         int overlap = false;
-        for (int i = 0; m_b1tcm_info[i].name != _tcm_info->name; i++) {
-            if ((_tcm_info->type == m_b1tcm_info[i].type)
-             && ((_tcm_info->base < m_b1tcm_info[i].end)
-                || (_tcm_info->end < m_b1tcm_info[i].end))) {
+        for (int i = 0; m_b1tcm_info[i].name != tcm_info->name; i++) {
+            if ((tcm_info->type == m_b1tcm_info[i].type)
+             && ((tcm_info->base < m_b1tcm_info[i].end)
+                || (tcm_info->end < m_b1tcm_info[i].end))) {
                 overlap = true;
                 break;
             }
         }
-        print_str(_tcm_info->name, 20, 0, 0);
+        print_str(tcm_info->name, 20, 0, 0);
         print_str(":", 1, 0, 2);  // 23
 
-        print_str((_tcm_info->type != SYS_MEM_TYPE_UNKNOWN ? m_sys_mem_type_name[_tcm_info->type] : "UNKNOWN"),
+        print_str((tcm_info->type != SYS_MEM_TYPE_UNKNOWN ? m_sys_mem_type_name[tcm_info->type] : "UNKNOWN"),
             10, 0, 2);  // 12
 
-        printf(" %8XH", _tcm_info->base);
+        printf(" %8XH", tcm_info->base);
         print_str("-", 1, 1, 1);  // 13
 
-        printf(" %8XH", _tcm_info->end);
+        printf(" %8XH", tcm_info->end);
         print_str(":", 1, 0, 1);  // 12
 
-        if (_tcm_info->type != SYS_MEM_TYPE_UNKNOWN)
-            printf("  %8X (%4d %2s)  ", _tcm_info->size,
-                (_tcm_info->size >= KB ? _tcm_info->size / KB : _tcm_info->size),
-                (_tcm_info->size >= KB ? "KB" : "B"));    // 22
+        if (tcm_info->type != SYS_MEM_TYPE_UNKNOWN)
+            printf("  %8X (%4d %2s)  ", tcm_info->size,
+                (tcm_info->size >= KB ? tcm_info->size / KB : tcm_info->size),
+                (tcm_info->size >= KB ? "KB" : "B"));    // 22
         else {
             print_ch('*', 20);
             print_ch(' ', 2);
@@ -281,16 +281,16 @@ void print_tcm_info(void)
 
         printf("\n");
         if (!overlap) {
-            total_size[_tcm_info->type] += _tcm_info->size;
-            addr_end[_tcm_info->type] = _tcm_info->end;
+            total_size[tcm_info->type] += tcm_info->size;
+            addr_end[tcm_info->type] = tcm_info->end;
         }
     }
     print_ch('-', 95);
     printf("\n");
 
     for (int i = 0; i < SYS_MEM_TYPE_SRAM; i++) {
-        u32 base = m_sys_tcm_info[i].base;
-        u32 size = m_sys_tcm_info[i].size;
+        u32 base = m_sys_tcm[i].base;
+        u32 size = m_sys_tcm[i].size;
 
         printf("[%-10s] Totol Size: %8x (",
             m_sys_mem_type_name[i], total_size[i]);
@@ -316,47 +316,53 @@ void print_tcm_info(void)
 
 int tcm_init(void)
 {
-    const tcm_info_t *_tcm_info = NULL;
+    const tcm_info_t *tcm_info = NULL;
     u32 addr_end[SYS_MEM_TYPE_MAX_NUM - 2];
     bool overlap;
 
     for (int i = 0; i < SYS_MEM_TYPE_SRAM; i++)
-        addr_end[i] = m_sys_tcm_info[i].base;
+        addr_end[i] = m_sys_tcm[i].base;
 
-    for (_tcm_info = m_b1tcm_info; _tcm_info->name != NULL; _tcm_info++) {
+    for (tcm_info = m_b1tcm_info; tcm_info->name != NULL; tcm_info++) {
         overlap = false;
-        for (int i = 0; m_b1tcm_info[i].name != _tcm_info->name; i++) {
-            if ((_tcm_info->type == m_b1tcm_info[i].type)
-            && ((_tcm_info->base < m_b1tcm_info[i].end)
-             || (_tcm_info->end  < m_b1tcm_info[i].end))) {
+        for (int i = 0; m_b1tcm_info[i].name != tcm_info->name; i++) {
+            if ((tcm_info->type == m_b1tcm_info[i].type)
+                && ((tcm_info->base < m_b1tcm_info[i].end)
+                    || (tcm_info->end  < m_b1tcm_info[i].end))) {
+            // if ((tcm_info->type == m_b1tcm_info[i].type)
+            //     && ((tcm_info->base >= m_b1tcm_info[i].base)
+            //         && (tcm_info->end  <= m_b1tcm_info[i].end))) {
                 overlap = true;
             }
         }
 
-        if (!overlap)
-            addr_end[_tcm_info->type] = _tcm_info->end;
+        if (!overlap) {
+            if (tcm_info->end > addr_end[tcm_info->type])
+                addr_end[tcm_info->type] = tcm_info->end;
+        }
     }
 
     for (int i = 0; i < SYS_MEM_TYPE_SRAM; i++) {
-        sys_tcm_info_t *_sys_tcm_info = &m_sys_tcm_info[i];
-        // _sys_tcm_info->base = _sys_tcm_info->base;
-        // _sys_tcm_info->end = addr_end[i];
-        _sys_tcm_info->size = _sys_tcm_info->size -
-            ((_sys_tcm_info->end > addr_end[i]) ? _sys_tcm_info->end - addr_end[i] : 0);
-        // printf("%d %x %x %x\n", i, _sys_tcm_info->size, _sys_tcm_info->end, addr_end[i]);
+        sys_tcm_info_t *sys_tcm = &m_sys_tcm[i];
+        // sys_tcm->base = sys_tcm->base;
+        // sys_tcm->end = addr_end[i];
+        sys_tcm->size
+            = sys_tcm->size
+            - ((sys_tcm->end > addr_end[i]) ? sys_tcm->end - addr_end[i] : 0);
+        // printf("%d %x %x %x\n", i, sys_tcm->size, sys_tcm->end, addr_end[i]);
 
-        void * aligned_ptr = aligned_alloc(_sys_tcm_info->size, _sys_tcm_info->align);
+        void * aligned_ptr = aligned_alloc(sys_tcm->size, sys_tcm->align);
         if (aligned_ptr == NULL) {
             tcm_release();
             return -1;
         }
-        _sys_tcm_info->ptr = aligned_ptr;
-        _sys_tcm_info->init = true;
+        sys_tcm->ptr = aligned_ptr;
+        sys_tcm->init = true;
     }
 
     // debug
     for (int id = 0; id < B1TCM_ID_MAX_NUM; id++) {
-        const tcm_info_t *tcm_info = &m_sys_tcm_info[SYS_MEM_TYPE_B1TCM].tcm_info[id];
+        const tcm_info_t *tcm_info = &m_sys_tcm[SYS_MEM_TYPE_B1TCM].tcm_info[id];
         printf("id: %d, name: %s, base: %8x, size: %4x, tcm: %8x\n",
             tcm_info->id, tcm_info->name, tcm_info->base, tcm_info->size,
             tcm_get_addr(SYS_MEM_TYPE_B1TCM, id));
@@ -368,12 +374,12 @@ int tcm_init(void)
 int tcm_release(void)
 {
     for (int i = 0; i < SYS_MEM_TYPE_SRAM; i++) {
-        sys_tcm_info_t *_sys_tcm_info = &m_sys_tcm_info[i];
-        if (_sys_tcm_info->ptr != NULL) {
-            void *aligned_ptr = _sys_tcm_info->ptr;
+        sys_tcm_info_t *sys_tcm = &m_sys_tcm[i];
+        if (sys_tcm->ptr != NULL) {
+            void *aligned_ptr = sys_tcm->ptr;
             free((void *)(*((size_t *)aligned_ptr - 1)));
-            _sys_tcm_info->ptr = NULL;
-            _sys_tcm_info->init = false;
+            sys_tcm->ptr = NULL;
+            sys_tcm->init = false;
         }
     }
 
@@ -385,8 +391,8 @@ u32 tcm_get_addr(sys_mem_type_e tcm_type, b1tcm_id_e tcm_id)
     if (tcm_type < SYS_MEM_TYPE_B0TCM_CPU0 || tcm_type > SYS_MEM_TYPE_B1TCM)
         return U32_MASK;
 
-    sys_tcm_info_t *_sys_tcm_info = &m_sys_tcm_info[tcm_type];
-    return _sys_tcm_info->tcm_info[tcm_id].base - _sys_tcm_info->base + (u32)_sys_tcm_info->ptr;
+    sys_tcm_info_t *sys_tcm = &m_sys_tcm[tcm_type];
+    return sys_tcm->tcm_info[tcm_id].base - sys_tcm->base + (u32)sys_tcm->ptr;
 }
 
 void *tcm_get_ptr(sys_mem_type_e tcm_type, b1tcm_id_e tcm_id)
@@ -394,6 +400,6 @@ void *tcm_get_ptr(sys_mem_type_e tcm_type, b1tcm_id_e tcm_id)
     if (tcm_type < SYS_MEM_TYPE_B0TCM_CPU0 || tcm_type > SYS_MEM_TYPE_B1TCM)
         return NULL;
 
-    sys_tcm_info_t *_sys_tcm_info = &m_sys_tcm_info[tcm_type];
-    return (void *)(_sys_tcm_info->tcm_info[tcm_id].base - _sys_tcm_info->base + (u32)_sys_tcm_info->ptr);
+    sys_tcm_info_t *sys_tcm = &m_sys_tcm[tcm_type];
+    return (void *)(sys_tcm->tcm_info[tcm_id].base - sys_tcm->base + (u32)sys_tcm->ptr);
 }

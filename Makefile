@@ -23,7 +23,7 @@ BIN      = ssd_sim.exe
 CXXFLAGS = $(CXXINCS) -m32
 CFLAGS   = $(INCS) -g -m32
 RM       = rm.exe -f
-BFLAGS   = -lpthread -g -o
+BFLAGS   = -static -lpthread -g -o
 
 .PHONY: all clean
 

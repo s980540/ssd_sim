@@ -1004,6 +1004,7 @@ typedef enum _b1tcm_id_e
     #if (OPT_TCM_DESC)
     FW_CMD_DESC0_IDX,
     #endif
+    WC_HASH_TBL_IDX,
     #if (EN_MT_HMB)
     // LFF_HMB_SQ1_FIFO_IDX,
     // LFF_HMB_CQ1_FIFO_IDX,

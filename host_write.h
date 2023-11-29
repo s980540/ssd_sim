@@ -10,17 +10,17 @@ typedef struct _host_write_list_t
     u64 lba;
     fw_desc_t *tail_desc;
 
-    u16 head_desc_id;
+    u16 head_id;
     u16 total_desc_cnt;
     u16 total_lba_cnt;
 
-    u16 tail_desc_id;
-    u16 tmp_desc_num;
-    u16 tmp_head_lba_cnt;
+    u16 tail_id;
+    // u16 tmp_desc_num;
+    // u16 tmp_head_lba_cnt;
 
     bool head_4k_aligned;
     bool tail_4k_aligned;
-    bool sequential;
+    bool seq;   // sequential
 
     bool fua;
     bool cmp;   // compare
@@ -32,6 +32,7 @@ typedef struct _host_write_list_t
 
 #define HW_DESC_CNT_MAX (FRAG_QNTY)
 
+void host_write_init(void);
 void host_write_top_exec(void);
 
-#endif // HOST_WRITE_H
+#endif // ~ HOST_WRITE_H

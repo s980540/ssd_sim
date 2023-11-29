@@ -79,17 +79,24 @@ int main(int argc, char *argv[])
     print_tcm_info();
     tcm_init();
     fifo_init();
+    main_test();
     if (hw_xdma_desc_init())
         printf("hw_xdma_desc_init fail\n");
+    else
+        printf("hw_xdma_desc_init pass\n");
+
     if (hw_xdma_desc_check())
         printf("hw_xdma_desc_check fail\n");
     else
         printf("hw_xdma_desc_check pass\n");
+
     if (hw_wdma_init())
         printf("hw_wdma_init fail\n");
+    else
+        printf("hw_wdma_init pass\n");
+
     system("pause");
 
-    main_test();
 
     thread_init();
 

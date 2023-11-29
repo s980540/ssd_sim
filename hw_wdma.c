@@ -247,14 +247,15 @@ reg_hw_wdma_ctrl_cclk_t *reg_hw_wdma_ctrl_cclk = NULL;
 int hw_wdma_init(void)
 {
 #if (OPT_SW_SIM)
-    if (mutex_init(&reg_hw_wdma_ctrl_cclk->mutex))
-        return -1;
 
     reg_hw_wdma_ctrl_cclk = malloc(sizeof(reg_hw_wdma_ctrl_cclk_t));
     if (NULL == reg_hw_wdma_ctrl_cclk)
         return -1;
 
     memset(reg_hw_wdma_ctrl_cclk, 0, sizeof(reg_hw_wdma_ctrl_cclk_t));
+
+    if (mutex_init(&reg_hw_wdma_ctrl_cclk->mutex))
+        return -1;
 #endif
 
     return 0;

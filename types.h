@@ -73,6 +73,8 @@ enum {
     const typeof( ((type *)0)->member ) *__mptr = (ptr); \
     (type *)( (char *)__mptr - _offsetof(type, member) );})
 
+#define U64_MASK                    (0xFFFFFFFFFFFFFFFF)
+
 #define U32_SHIFT                   (32)
 #define U32_MASK                    ((1ULL << U32_SHIFT) - 1)
 
