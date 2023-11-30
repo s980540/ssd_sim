@@ -21,15 +21,18 @@ typedef struct _ftl_partial_write_t
     // 12
     u32 tick;
     // 16
-    void (*push)(fw_desc_t *desc);
+    void (*add)(fw_desc_t *desc);
     fw_desc_t *(*hit)(u64 lba, u8 sect_cnt, u8 flag, u8 *rlt);
     void (*del)(fw_desc_t *desc, u8 flag);
 } __attribute__((packed)) ftl_partial_write_t;
 
-#define FTL_PARTIAL_WRITE_MAX (1)
-
-extern void ftl_partial_write_init(void);
+#define FTL_PARTIAL_WRITE_MAX       (1)
+#define FTL_PARTIAL_WRITE_IS_FULL   (g_ftl_part_wr.cnt > FTL_PARTIAL_WRITE_MAX)
+#define FTL_PARTIAL_WRITE_TODO      (g_ftl_part_wr.cnt)
 
 extern ftl_partial_write_t g_ftl_part_wr;
+
+extern void ftl_partial_write_init(void);
+extern void ftl_partial_write_exec(void);
 
 #endif

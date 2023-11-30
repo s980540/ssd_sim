@@ -220,13 +220,13 @@
 #define LFF_UEFI_BOOT_DONE_END      (LFF_UEFI_BOOT_DONE_BASE + 2)
 
 // 32 u8
-#define _CMP_CMD_BASE               (DW_ALIGNED(LFF_UEFI_BOOT_DONE_END))
-#define CMP_CMD_BASE                (g_b1tcm_base[CMP_CMD_IDX])
-#define CMP_CMD                     ((volatile ftl_cmp_info_t *)(CMP_CMD_BASE))
-#define CMP_CMD_END                 (_CMP_CMD_BASE + 32)
+#define _LFF_CMP_CMD_BASE           (DW_ALIGNED(LFF_UEFI_BOOT_DONE_END))
+#define LFF_CMP_CMD_BASE            (g_b1tcm_base[LFF_CMP_CMD_IDX])
+#define r_ftl_cmp_cmd               ((volatile ftl_cmp_cmd_info_t *)(LFF_CMP_CMD_BASE))
+#define LFF_CMP_CMD_END             (_LFF_CMP_CMD_BASE + 32)
 
 // for ps3_1 exit time to do idle procedure
-#define LFF_GC_FLAG_BASE            (DW_ALIGNED(CMP_CMD_END))
+#define LFF_GC_FLAG_BASE            (DW_ALIGNED(LFF_CMP_CMD_END))
 #define LFF_GC_FLAG                 *(volatile u32 *)(LFF_GC_FLAG_BASE)
 #define LFF_GC_FLAG_END             (LFF_GC_FLAG_BASE + 4)
 
@@ -281,9 +281,10 @@
 #define LFF_PAUSE_MERGE_END         (LFF_PAUSE_MERGE_BASE + 1)
 
 //
-#define LFF_WRITE_PROTECT_BASE      (LFF_PAUSE_MERGE_END)
-#define LFF_WRITE_PROTECT           *(volatile u8 *)(LFF_WRITE_PROTECT_BASE)
-#define LFF_WRITE_PROTECT_END       (LFF_WRITE_PROTECT_BASE + 1)
+#define _LFF_WRITE_PROTECT_BASE     (LFF_PAUSE_MERGE_END)
+#define LFF_WRITE_PROTECT_BASE      (g_b1tcm_base[LFF_WRITE_PROTECT_IDX])
+#define r_write_protect             *(volatile u8 *)(LFF_WRITE_PROTECT_BASE)
+#define LFF_WRITE_PROTECT_END       (_LFF_WRITE_PROTECT_BASE + 1)
 
 //
 #define LFF_IDLE_REQUEST_BASE       (LFF_WRITE_PROTECT_END)
@@ -1197,12 +1198,12 @@ so CPU1 will always return in create queue command and alloc buffer until PBT do
 #define LFF_UEFI_BOOT_DONE_END      (LFF_UEFI_BOOT_DONE_BASE + 2)
 
 // 32 u8
-#define CMP_CMD_BASE            (DW_ALIGNED(LFF_UEFI_BOOT_DONE_END))
-#define CMP_CMD                 ((volatile ftl_cmp_info_t *)(CMP_CMD_BASE))
-#define CMP_CMD_END             (CMP_CMD_BASE + 32)
+#define LFF_CMP_CMD_BASE            (DW_ALIGNED(LFF_UEFI_BOOT_DONE_END))
+#define LFF_CMP_CMD                 ((volatile ftl_cmp_cmd_info_t *)(LFF_CMP_CMD_BASE))
+#define LFF_CMP_CMD_END             (LFF_CMP_CMD_BASE + 32)
 
 // for ps3_1 exit time to do idle procedure
-#define LFF_GC_FLAG_BASE            (DW_ALIGNED(CMP_CMD_END))
+#define LFF_GC_FLAG_BASE            (DW_ALIGNED(LFF_CMP_CMD_END))
 #define LFF_GC_FLAG                 *(volatile u32 *)(LFF_GC_FLAG_BASE)
 #define LFF_GC_FLAG_END             (LFF_GC_FLAG_BASE + 4)
 
@@ -1959,7 +1960,8 @@ so CPU1 will always return in create queue command and alloc buffer until PBT do
 
 typedef enum _b1tcm_id_e
 {
-    CMP_CMD_IDX,
+    LFF_CMP_CMD_IDX,
+    LFF_WRITE_PROTECT_IDX,
     // MT_ACQ_PQ_IDX,
     // LFF_HR_SQ0_FIFO_IDX,
     // LFF_HR_CQ0_FIFO_IDX,

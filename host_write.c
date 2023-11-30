@@ -3,16 +3,17 @@
 // #include "fifo.h"
 #include "tcm.h"
 
-#include "ftl.h"
-#include "ftl_write_cache.h"
-#include "ftl_partial_write.h"
-
 #include "sys_reg.h"
 #include "nvme_hw_dma.h"
 #include "fw_desc.h"
 #include "desc.h"
 
 #include "hw_wdma.h"
+
+#include "ftl.h"
+#include "ftl_write_cache.h"
+#include "ftl_partial_write.h"
+#include "ftl_fua.h"
 
 host_write_list_t g_hw_list;
 
@@ -39,7 +40,7 @@ void host_write_init(void)
     g_hw_list.fua_entry_id = U8_MASK;
 }
 
-void host_write_insert_desc_to_list(void)
+void hwt_insert_desc_to_list(void)
 {
     hw_wdma_desc_t *hw_wdma_desc;
     fw_desc_t *fw_desc = NULL;
@@ -69,7 +70,7 @@ void host_write_insert_desc_to_list(void)
             g_hw_list.lba
                 = hw_wdma_desc->lba_low.lba_31_0
                 | ((u64)hw_wdma_desc->glb.lba_37_32 << U32_SHIFT);
-            printf("lba: %llx\n", g_hw_list.lba);
+            printf("[%s] lba:%llx\n", __FUNCTION__, g_hw_list.lba);
 
             g_hw_list.tail_desc = fw_desc;
             g_hw_list.tail_id = desc_id;
@@ -133,28 +134,48 @@ void host_write_insert_desc_to_list(void)
     } // ~ while (wdma_desc_ctrl0 & 0x1)
 }
 
-void host_write_top_cmp_cmd(void)
+void hwt_cmp_cmd(void)
 {
 
 }
 
-void host_write_protect(void)
+void hwt_write_protect(void)
 {
 
 }
 
-void host_write_handle_list(void)
+bool hwt_set_desc_config(void)
+{
+
+}
+
+void hwt_push_non_4k_aligned(void)
+{
+
+}
+
+void hwt_push_4k_aligned(void)
+{
+
+}
+
+bool hwt_flush_cmd(void)
+{
+
+}
+
+void hwt_handle_list(void)
 {
     hw_wdma_desc_t *hw_wdma_desc = NULL;
     fw_desc_t *part_desc = NULL;
 
     if (g_hw_list.cmp) {
-        host_write_top_cmp_cmd();
+        hwt_cmp_cmd();
         return;
     }
 
     if (r_write_protect) {
-        host_write_protect();
+        hwt_write_protect();
         return;
     }
 
@@ -164,9 +185,39 @@ void host_write_handle_list(void)
             || (part_desc->laa != (g_hw_list.lba >> SECTOR_SHIFT))
             || (g_ftl_part_wr.cnt > FTL_PARTIAL_WRITE_MAX)
             || (g_hw_list.fua)) {
-
+            g_ftl_part_wr.seq = 0;
         }
     }
+
+    if (g_hw_list.fua) {
+        if (g_hw_list.first_4k && (U8_MASK == g_hw_list.fua_entry_id)) {
+            if (FTL_FUA_ENTRY_IS_FULL)
+                return;
+            else {
+                hw_wdma_desc = (hw_wdma_desc_t *)FW_DESC_ID_2_PTR(g_hw_list.head_id);
+                g_hw_list.fua_entry_id = g_ftl_fua.add(
+                                            hw_wdma_desc->nlb.func_id,
+                                            hw_wdma_desc->glb.tag,
+                                            hw_wdma_desc->uid.cmd_id,
+                                            hw_wdma_desc->lba_low.lba_31_0
+                                                | ((u64)hw_wdma_desc->glb.lba_37_32 << U32_SHIFT),
+                                            hw_wdma_desc->lba_max.total_nlb);
+
+                if (U8_MASK == g_hw_list.fua_entry_id) {
+                    printf("fua err\n");
+                    while (1);
+                }
+            }
+        }
+    }
+
+    if (hwt_set_desc_config())
+        return;
+
+    if (0 == g_hw_list.head_4k_aligned)
+        hwt_push_non_4k_aligned();
+    else
+        hwt_push_4k_aligned();
 }
 
 void host_write_top_exec(void)
@@ -174,15 +225,19 @@ void host_write_top_exec(void)
     if ((g_hw_list.total_desc_cnt == 0)
     && (ftl_write_cache_host_write_cond())
     && (!r_pause_write)
-    && (!r_ftl_cmp_info->cmp)) {
+    && (!r_ftl_cmp_cmd->cmp)) {
         // g_system_last_access = g_system_timer;
-        host_write_insert_desc_to_list();
-        if (g_hw_list.total_desc_cnt) {
+        hwt_insert_desc_to_list();
+        // if (g_hw_list.total_desc_cnt) {
 
-        }
+        // }
     }
 
-    if (g_hw_list.total_desc_cnt) {
+    if (g_hw_list.total_desc_cnt)
+        hwt_handle_list();
 
-    }
+    if (hwt_flush_cmd())
+        return;
+
+    return;
 }

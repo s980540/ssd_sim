@@ -3,7 +3,11 @@
 #include "main.h"
 
 #include "shared_mem.h"
+
 #include "ftl_write_cache.h"
+#include "ftl_partial_write.h"
+#include "ftl_fua.h"
+
 #include "host_write.h"
 
 static thread_info_t m_thread_info;
@@ -20,6 +24,7 @@ void main_init(void)
     shared_mem_init();
     ftl_write_cache_init();
     ftl_partial_write_init();
+    ftl_fua_init();
 
     host_write_init();
 }
@@ -41,6 +46,16 @@ void *main_cpu0(void *para)
     while (1) {
         // main_cpu0_unit_test();
         host_write_top_exec();
+
+        if (FTL_FUA_TODO) {
+            if (FTL_FUA_DONE)
+                ftl_fua_cmpl_exec();
+        }
+
+        if (FTL_PARTIAL_WRITE_TODO) {
+            ftl_partial_write_exec();
+        }
+
         if (m_thread_info.sleep_nsec) {
             ret = nanosleep(&request, NULL);
             if (ret == -1)

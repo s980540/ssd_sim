@@ -15,7 +15,7 @@ typedef struct _ftl_cmp_info_t
     u32 get_len;
     u32 uid;
     u32 cmp_addr;
-} __attribute__((packed)) ftl_cmp_info_t;
+} __attribute__((packed)) ftl_cmp_cmd_info_t;
 
 // #define reg_hw_wdma_ctrl_cclk (volatile reg_hw_wdma_ctrl_cclk_t *)()
 
