@@ -216,6 +216,8 @@ static const tcm_info_t m_b1tcm_info[] =
     {NULL}
 };
 
+u32 g_b1tcm_base[B1TCM_ID_MAX_NUM];
+
 sys_tcm_info_t m_sys_tcm[SYS_MEM_TYPE_MAX_NUM - 2] =
 {
     SYS_TCM_INFO(B0TCM_BASE, B0TCM_END, B0TCM_SIZE, NULL, NULL),
@@ -320,6 +322,8 @@ int tcm_init(void)
     u32 addr_end[SYS_MEM_TYPE_MAX_NUM - 2];
     bool overlap;
 
+    memset(g_b1tcm_base, 0, sizeof(g_b1tcm_base));
+
     for (int i = 0; i < SYS_MEM_TYPE_SRAM; i++)
         addr_end[i] = m_sys_tcm[i].base;
 
@@ -366,6 +370,7 @@ int tcm_init(void)
         printf("id: %d, name: %s, base: %8x, size: %4x, tcm: %8x\n",
             tcm_info->id, tcm_info->name, tcm_info->base, tcm_info->size,
             tcm_get_addr(SYS_MEM_TYPE_B1TCM, id));
+        g_b1tcm_base[id] = tcm_get_addr(SYS_MEM_TYPE_B1TCM, id);
     }
 
     return 0;

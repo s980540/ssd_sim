@@ -221,7 +221,7 @@
 
 // 32 u8
 #define _CMP_CMD_BASE               (DW_ALIGNED(LFF_UEFI_BOOT_DONE_END))
-#define CMP_CMD_BASE                (tcm_get_addr(SYS_MEM_TYPE_B1TCM, CMP_CMD_IDX))
+#define CMP_CMD_BASE                (g_b1tcm_base[CMP_CMD_IDX])
 #define CMP_CMD                     ((volatile ftl_cmp_info_t *)(CMP_CMD_BASE))
 #define CMP_CMD_END                 (_CMP_CMD_BASE + 32)
 
@@ -408,8 +408,8 @@
 // COMMAN_CMD_CQ
 #define COM_CMD_CQ_FIFO_SIZE        (4 * FRAG_QNTY) // for dbg, after stable set as 128
 #define COM_CMD_CQ_FIFO_ENTRY_SIZE  (4)
-#define _COM_CMD_CQ0_FIFO_BASE       (DW_ALIGNED(LFF_HR_CQ0_FIFO_END))
-#define COM_CMD_CQ0_FIFO_BASE       (tcm_get_addr(SYS_MEM_TYPE_B1TCM, COM_CMD_CQ0_FIFO_IDX))
+#define _COM_CMD_CQ0_FIFO_BASE      (DW_ALIGNED(LFF_HR_CQ0_FIFO_END))
+#define COM_CMD_CQ0_FIFO_BASE       (g_b1tcm_base[COM_CMD_CQ0_FIFO_IDX])
 #define COM_CMD_CQ0_FIFO_END        (_COM_CMD_CQ0_FIFO_BASE + COM_CMD_CQ_FIFO_SIZE * COM_CMD_CQ_FIFO_ENTRY_SIZE)
 
 #if (EN_MT_HMB)
@@ -449,17 +449,17 @@
 #define COM_CMD_SQ_FIFO_SIZE        (128)
 #define COM_CMD_SQ_FIFO_ENTRY_SIZE  (16)
 #define _COM_CMD_SQ0_FIFO_BASE      (DW_ALIGNED(LFF_HR_CQ1_FIFO_END))
-#define COM_CMD_SQ0_FIFO_BASE       (tcm_get_addr(SYS_MEM_TYPE_B1TCM, COM_CMD_SQ0_FIFO_IDX))
+#define COM_CMD_SQ0_FIFO_BASE       (g_b1tcm_base[COM_CMD_SQ0_FIFO_IDX])
 #define COM_CMD_SQ0_FIFO_END        (_COM_CMD_SQ0_FIFO_BASE + COM_CMD_SQ_FIFO_SIZE * COM_CMD_SQ_FIFO_ENTRY_SIZE)
 #define rstCOM_SQ0_FIFO_CMD(m)      ((volatile u32 *)(COM_CMD_SQ0_FIFO_BASE + (m) * COM_CMD_SQ_FIFO_ENTRY_SIZE))
 
 #define _COM_CMD_SQ1_FIFO_BASE      (DW_ALIGNED(COM_CMD_SQ0_FIFO_END))
-#define COM_CMD_SQ1_FIFO_BASE       (tcm_get_addr(SYS_MEM_TYPE_B1TCM, COM_CMD_SQ1_FIFO_IDX))
+#define COM_CMD_SQ1_FIFO_BASE       (g_b1tcm_base[COM_CMD_SQ1_FIFO_IDX])
 #define COM_CMD_SQ1_FIFO_END        (_COM_CMD_SQ1_FIFO_BASE + COM_CMD_SQ_FIFO_SIZE * COM_CMD_SQ_FIFO_ENTRY_SIZE)
 #define rstCOM_SQ1_FIFO_CMD(m)      ((volatile u32 *)(COM_CMD_SQ1_FIFO_BASE + (m) * COM_CMD_SQ_FIFO_ENTRY_SIZE))
 
 #define _COM_CMD_CQ1_FIFO_BASE      (DW_ALIGNED(COM_CMD_SQ1_FIFO_END))
-#define COM_CMD_CQ1_FIFO_BASE       (tcm_get_addr(SYS_MEM_TYPE_B1TCM, COM_CMD_CQ1_FIFO_IDX))
+#define COM_CMD_CQ1_FIFO_BASE       (g_b1tcm_base[COM_CMD_CQ1_FIFO_IDX])
 #define COM_CMD_CQ1_FIFO_END        (_COM_CMD_CQ1_FIFO_BASE + COM_CMD_CQ_FIFO_SIZE * COM_CMD_CQ_FIFO_ENTRY_SIZE)
 #define rstCOM_CQ1_FIFO_CMD(m)      ((volatile u32 *)(COM_CMD_CQ1_FIFO_BASE + (m) * COM_CMD_CQ_FIFO_ENTRY_SIZE))
 
@@ -603,7 +603,7 @@
 // table
 #if (OPT_TCM_DESC)
 #define _FW_CMD_DESC0_BASE          (FW_MEM_ADDR_ALIGNED(LFF_END))
-#define FW_CMD_DESC0_BASE           (tcm_get_addr(SYS_MEM_TYPE_B1TCM, FW_CMD_DESC0_IDX))
+#define FW_CMD_DESC0_BASE           (g_b1tcm_base[FW_CMD_DESC0_IDX])
 #else
 #define FW_CMD_DESC0_BASE            (SRAM_MEM_BASE)
 #endif
@@ -684,7 +684,7 @@
 
 // wc hash tbl
 #define _WC_HASH_TBL_BASE            (FW_MEM_ADDR_ALIGNED(HW_TRIM_VC_END2))
-#define WC_HASH_TBL_BASE            (tcm_get_addr(SYS_MEM_TYPE_B1TCM, WC_HASH_TBL_IDX))
+#define WC_HASH_TBL_BASE            (g_b1tcm_base[WC_HASH_TBL_IDX])
 #define WC_HASH_TBL_END             (_WC_HASH_TBL_BASE + WRITE_CAHCE_HASH_TBL_ENTRY_NUM * 2)
 
 // rowc
@@ -747,7 +747,7 @@
 
 // shared var
 #define _SHARED_VAR_BASE            (FW_MEM_ADDR_ALIGNED(B1TCM_TABLE_END))
-#define SHARED_VAR_BASE             (tcm_get_addr(SYS_MEM_TYPE_B1TCM, SHARED_VAR_IDX))
+#define SHARED_VAR_BASE             (g_b1tcm_base[SHARED_VAR_IDX])
 
 #define rbWrCmdInfoWrPtr            (*(volatile u8 *)(SHARED_VAR_BASE + 0x0000))
 #define rbWrCmdInfoRdPtr            (*(volatile u8 *)(SHARED_VAR_BASE + 0x0001))
@@ -1986,6 +1986,8 @@ typedef enum _b1tcm_id_e
     SHARED_VAR_IDX,
     B1TCM_ID_MAX_NUM
 } b1tcm_id_e;
+
+extern u32 g_b1tcm_base[];
 
 extern void print_tcm_info(void);
 extern int tcm_init(void);
