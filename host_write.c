@@ -146,7 +146,28 @@ void hwt_write_protect(void)
 
 bool hwt_set_desc_config(void)
 {
+    fw_desc_t *desc = NULL;
+    hw_wdma_desc_t *wdma_desc = NULL;
 
+    u64 lba_str;
+    u32 lba_cnt;
+
+    u16 head_id, temp_id, desc_id, prev_id;
+    bool fua = g_hw_list.fua;
+    bool sts = FALSE;
+
+    head_id = g_hw_list.head_id;
+    prev_id = DESC_ID_NULL;
+    desc = FW_DESC_ID_2_PTR(head_id);
+
+    FTL_DESC_FOR_EACH_SAFE(desc_id, temp_id, head_id, next_id) {
+        desc = FW_DESC_ID_2_PTR(desc_id);
+        wdma_desc = (hw_wdma_desc_t *)desc;
+
+        if (wdma_desc->nlb.rls_buf || wdma_desc->sts.sts) {
+
+        }
+    }
 }
 
 void hwt_push_non_4k_aligned(void)

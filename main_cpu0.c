@@ -3,6 +3,7 @@
 #include "main.h"
 
 #include "shared_mem.h"
+#include "sys_data_buf.h"
 
 #include "ftl_write_cache.h"
 #include "ftl_partial_write.h"
@@ -22,6 +23,8 @@ void main_cpu0_unit_test(void)
 void main_init(void)
 {
     shared_mem_init();
+    sys_data_buf_mgr_init();
+
     ftl_write_cache_init();
     ftl_partial_write_init();
     ftl_fua_init();
