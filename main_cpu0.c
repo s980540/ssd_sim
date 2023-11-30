@@ -2,6 +2,8 @@
 #include "thread.h"
 #include "main.h"
 
+#include "shared_mem.h"
+#include "ftl_write_cache.h"
 #include "host_write.h"
 
 static thread_info_t m_thread_info;
@@ -11,6 +13,15 @@ void main_cpu0_unit_test(void)
     pthread_mutex_lock(&foo.mutex);
     printf("[Thread %d]: %d\n", m_thread_info.thread_id, foo.val);
     pthread_mutex_unlock(&foo.mutex);
+}
+
+void main_init(void)
+{
+    shared_mem_init();
+    ftl_write_cache_init();
+    ftl_partial_write_init();
+
+    host_write_init();
 }
 
 void *main_cpu0(void *para)
@@ -25,7 +36,7 @@ void *main_cpu0(void *para)
     request.tv_sec = 0;
     request.tv_nsec = m_thread_info.sleep_nsec;
 
-    host_write_init();
+    main_init();
 
     while (1) {
         // main_cpu0_unit_test();

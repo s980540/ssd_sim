@@ -95,7 +95,6 @@ int main(int argc, char *argv[])
 
     system("pause");
 
-
     thread_init();
 
     // fifo_unit_test();
@@ -105,7 +104,6 @@ int main(int argc, char *argv[])
     hw_xdma_desc_deinit();
     // fifo_deinit();
     tcm_release();
-
 
     return 0;
 }

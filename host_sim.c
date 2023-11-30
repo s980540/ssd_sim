@@ -37,7 +37,7 @@ u64 host_sim_seq_write_exec(void)
         }
 
         u16 desc_id = hw_xdma_desc_alloc();
-        hw_wdma_desc_t *desc = (hw_wdma_desc_t *)FCL_DESC_ID_2_PTR(desc_id);
+        hw_wdma_desc_t *desc = (hw_wdma_desc_t *)FW_DESC_ID_2_PTR(desc_id);
         desc->glb.current_nlb = SECTOR_NUM;
         desc->nlb.remain_nlb = 0;
         // desc->lba_max.first_4k = 1;

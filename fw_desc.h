@@ -166,7 +166,7 @@ typedef struct _fw_desc_t
     #endif
 } __attribute__((packed)) fw_desc_t;
 
-#define FW_FCL_DESC_ID_2_PTR(id) \
+#define FW_DESC_ID_2_PTR(id) \
     ((fw_desc_t *)(FCL_DESC_ID_2_PTR(id)))
 
 #endif // FW_DESC_H

@@ -5,6 +5,7 @@
 
 #include "ftl.h"
 #include "ftl_write_cache.h"
+#include "ftl_partial_write.h"
 
 #include "sys_reg.h"
 #include "nvme_hw_dma.h"
@@ -47,12 +48,13 @@ void host_write_insert_desc_to_list(void)
     u16 desc_id;
     u16 lba_cnt;
 
-    // wdma_desc_ctrl0 = reg_hw_wdma_ctrl_cclk->wdma_desc_ctrl0.config;
+    hw_wdma_ctrl_cclk_lock();
     wdma_desc_ctrl0 = hw_wdma_desc_ctrl0();
+    hw_wdma_ctrl_cclk_unlock();
 
     while (wdma_desc_ctrl0 & 0x1) {
         desc_id = (wdma_desc_ctrl0 >> 16);
-        fw_desc = FW_FCL_DESC_ID_2_PTR(desc_id);
+        fw_desc = FW_DESC_ID_2_PTR(desc_id);
         hw_wdma_desc = (hw_wdma_desc_t *)fw_desc;
 
         lba_cnt = hw_wdma_desc->glb.current_nlb;
@@ -82,8 +84,9 @@ void host_write_insert_desc_to_list(void)
                 }
             }
 
-            // reg_hw_wdma_ctrl_cclk->wdma_desc_ctrl0.bits.vld = 1;
+            hw_wdma_ctrl_cclk_lock();
             hw_wdma_desc_clr();
+            hw_wdma_ctrl_cclk_unlock();
 
             if (lba_cnt != SECTOR_NUM) {
                 g_hw_list.lba
@@ -103,8 +106,9 @@ void host_write_insert_desc_to_list(void)
                 || (hw_wdma_desc->nlb.cmp_cmd != g_hw_list.cmp))
                 return;
 
-            // reg_hw_wdma_ctrl_cclk->wdma_desc_ctrl0.bits.vld = 1;
+            hw_wdma_ctrl_cclk_lock();
             hw_wdma_desc_clr();
+            hw_wdma_ctrl_cclk_unlock();
 
             g_hw_list.total_desc_cnt++;
             g_hw_list.tail_desc = fw_desc;
@@ -122,21 +126,63 @@ void host_write_insert_desc_to_list(void)
             && (g_hw_list.fua || g_hw_list.cmp))
             return;
 
-        // wdma_desc_ctrl0 = reg_hw_wdma_ctrl_cclk->wdma_desc_ctrl0.config;
+        hw_wdma_ctrl_cclk_lock();
         wdma_desc_ctrl0 = hw_wdma_desc_ctrl0();
+        hw_wdma_ctrl_cclk_unlock();
+
     } // ~ while (wdma_desc_ctrl0 & 0x1)
+}
+
+void host_write_top_cmp_cmd(void)
+{
+
+}
+
+void host_write_protect(void)
+{
+
+}
+
+void host_write_handle_list(void)
+{
+    hw_wdma_desc_t *hw_wdma_desc = NULL;
+    fw_desc_t *part_desc = NULL;
+
+    if (g_hw_list.cmp) {
+        host_write_top_cmp_cmd();
+        return;
+    }
+
+    if (r_write_protect) {
+        host_write_protect();
+        return;
+    }
+
+    if (g_ftl_part_wr.cnt) {
+        part_desc = FW_DESC_ID_2_PTR(g_ftl_part_wr.tail_id);
+        if ((g_hw_list.head_4k_aligned)
+            || (part_desc->laa != (g_hw_list.lba >> SECTOR_SHIFT))
+            || (g_ftl_part_wr.cnt > FTL_PARTIAL_WRITE_MAX)
+            || (g_hw_list.fua)) {
+
+        }
+    }
 }
 
 void host_write_top_exec(void)
 {
     if ((g_hw_list.total_desc_cnt == 0)
-    && (WC_HOST_WR_COND)
+    && (ftl_write_cache_host_write_cond())
     && (!r_pause_write)
-    && (!CMP_CMD->cmp_flag)) {
+    && (!r_ftl_cmp_info->cmp)) {
         // g_system_last_access = g_system_timer;
         host_write_insert_desc_to_list();
         if (g_hw_list.total_desc_cnt) {
 
         }
+    }
+
+    if (g_hw_list.total_desc_cnt) {
+
     }
 }

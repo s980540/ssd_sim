@@ -5,7 +5,7 @@
 
 typedef struct _ftl_cmp_info_t
 {
-    u8 cmp_flag;
+    u8 cmp;
     u8 tag;
     u8 sec_cnt;
     u8 cmp_result;

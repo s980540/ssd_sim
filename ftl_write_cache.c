@@ -6,7 +6,7 @@
 
 ftl_write_cache_t g_ftl_write_cache;
 
-swlist_t g_ftl_write_cache_flush_list;
+swlist_t g_ftl_wc_flush_list;
 
 void ftl_write_cache_init(void)
 {
@@ -42,12 +42,12 @@ fw_desc_t *ftl_write_cache_hit(u32 laa)
     return NULL;
 }
 
-bool write_cache_flush_condition(void)
+bool ftl_write_cache_flush_cond(void)
 {
-    return g_ftl_write_cache_flush_list.cnt >= WC_AU_MIN_NUM;
+    return g_ftl_wc_flush_list.cnt >= WC_AU_MIN_NUM;
 }
 
-bool write_cache_host_write_condition(void)
+bool ftl_write_cache_host_write_cond(void)
 {
-    return g_ftl_write_cache_flush_list.cnt < WC_AU_MAX_NUM;
+    return g_ftl_wc_flush_list.cnt < WC_AU_MAX_NUM;
 }

@@ -16,16 +16,16 @@ typedef struct _ftl_write_cache_t
     fw_desc_t *(*hit)(u32 laa);
 } ftl_write_cache_t;
 
-#define WC_HOST_WR_COND (write_cache_host_write_condition())
-#define WC_FLUSH_COND   (write_cache_flush_condition())
+#define WC_HOST_WR_COND (ftl_write_cache_host_write_cond())
+#define WC_FLUSH_COND   (ftl_write_cache_flush_cond())
 
-void ftl_write_cache_init(void);
-void ftl_write_cache_push(fw_desc_t *desc);
-void ftl_write_cache_del(fw_desc_t *desc);
-void ftl_write_cache_del_list(u16 desc_id);
-fw_desc_t *ftl_write_cache_hit(u32 laa);
+extern void ftl_write_cache_init(void);
+extern void ftl_write_cache_push(fw_desc_t *desc);
+extern void ftl_write_cache_del(fw_desc_t *desc);
+extern void ftl_write_cache_del_list(u16 desc_id);
+extern fw_desc_t *ftl_write_cache_hit(u32 laa);
 
-extern bool write_cache_flush_condition(void);
-extern bool write_cache_host_write_condition(void);
+extern bool ftl_write_cache_flush_cond(void);
+extern bool ftl_write_cache_host_write_cond(void);
 
 #endif // FTL_WRITE_CACHE_H
